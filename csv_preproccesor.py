@@ -12,7 +12,7 @@ def get_location(city, geolocator):
         return (None, None)        
 
 #setting up our dataframe
-def csv_preproccesor(file_path, output_path):
+def add_csv_coordinates(file_path, output_path):
     csv = pd.read_csv(file_path)
     df = pd.DataFrame(csv)
 
