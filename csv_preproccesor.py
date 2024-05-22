@@ -1,12 +1,16 @@
 import numpy as np
 import pandas as pd
 from tqdm.auto import tqdm
-from geopy.geocoders import Nominatim
+# from geopy.geocoders import Nominatim
+from opencage.geocoder import OpenCageGeocode
+
+#geocoder key
+key = 'f1f7399fd125406faee7765413cca016'
 
 #defining our function to get the geolocator per city
-def get_location(city, geolocator):
+def get_location(address, geolocator):
     try:
-        location = geolocator.geocode(city)
+        location = geolocator.geocode(address, no_annotations='1')
         return (location.latitude, location.longitude)
     except:
         return (None, None)        
@@ -17,11 +21,12 @@ def add_csv_coordinates(file_path, output_path):
     df = pd.DataFrame(csv)
 
     #Instantiating a new Nominatim client
-    app = Nominatim(user_agent='road_trip')
+    # app = Nominatim(user_agent='road_trip')
+    geocoder = OpenCageGeocode(key)
 
     #Getting our latitude and longitude
     tqdm.pandas()
-    df['latitude'], df['longitude'] = zip(*df['Route Finish'].progress_apply(lambda x: get_location(x, app)))
+    df['latitude'], df['longitude'] = zip(*df['Route Finish'].progress_apply(lambda x: get_location(x, geocoder)))
 
     #updating and returning the csv with the lat. and long.
     df.to_csv(output_path, index=False)
